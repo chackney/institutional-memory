@@ -46,6 +46,8 @@ def main() -> None:
         raise SystemExit("Set ANTHROPIC_API_KEY before running.")
 
     main_agent_id = Path(".agent_id").read_text().strip()
+    environment_id = Path(".environment_id").read_text().strip()
+    memory_store_id = Path(".memory_store_id").read_text().strip()
 
     client = Anthropic(
         api_key=api_key,
@@ -76,7 +78,22 @@ def main() -> None:
         print(f"Curator agent created: {curator_id}")
 
     # Run a curation session. In production this would be a scheduled Routine.
-    session = client.beta.sessions.create(agent=curator_id)
+    session = client.beta.sessions.create(
+        agent=curator_id,
+        environment_id=environment_id,
+        title="Memory curation pass",
+        resources=[
+            {
+                "type": "memory_store",
+                "memory_store_id": memory_store_id,
+                "access": "read_write",
+                "instructions": (
+                    "This is the main agent's memory store, mounted at "
+                    "/mnt/memory/. Curate it per your standard process."
+                ),
+            }
+        ],
+    )
     client.beta.sessions.events.send(
         session.id,
         events=[
@@ -98,11 +115,16 @@ def main() -> None:
     print("Curator working...")
     text_parts = []
     for event in client.beta.sessions.events.stream(session.id):
-        if event.type == "agent.message_delta":
-            for block in event.delta.content:
-                if block.type == "text_delta":
+        if event.type == "agent.message":
+            for block in event.content:
+                if getattr(block, "type", None) == "text":
                     text_parts.append(block.text)
-        if event.type == "session.status_idle":
+        elif event.type == "agent.tool_use":
+            name = getattr(event, "name", "?")
+            inp = getattr(event, "input", {}) or {}
+            target = inp.get("path") or inp.get("file_path") or inp.get("command") or ""
+            print(f"\n  [{name}  {target}]", flush=True)
+        elif event.type == "session.status_idle":
             break
 
     print("\n=== CURATOR REPORT ===")
