@@ -23,6 +23,10 @@ Running log of talking points for the demo. Updated as we build.
 
 8. **The curator's first report was legitimately boring — and that's the point.** With only two sessions behind it, the store was clean: no duplicates, no contradictions, nothing stale enough to prune. It's a good setup line for "run this again after round 3 lands and watch it actually do work."
 
+9. **Built a lightweight comparison UI instead of just reading raw text files aloud.** `view_outputs.py` parses `outputs/session1.txt` and `outputs/session2.txt` (splitting each on the `Question:` / `--- ANSWER ---` markers), then renders both answers side by side as `outputs/compare.html` — a single shared question banner up top, two panels underneath, markdown rendered client-side via `marked.js` from a CDN so headings, tables, and citations format properly instead of showing raw `#`/`|` characters.
+
+10. **Kept the UI to one dependency-free script on purpose.** No build step, no server — it's a static HTML file the script writes and opens directly in the browser (`webbrowser.open`), so re-running it after any new session output is a single `python view_outputs.py`. That mattered more than it sounds: `osascript`-based auto-open failed under the sandboxed terminal, so we fell back to `open outputs/compare.html` directly — a reminder to keep an escape hatch for auto-launch steps in a demo environment.
+
 ## Ideas for what to show live in the room
 
 - Two terminals side by side: session 1 output on the left, session 2 on the right. Read both aloud back to back — the room hears the answer sharpen.
