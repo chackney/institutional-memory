@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Institutional Memory Agent</title>
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Institutional Memory Agent</h1>
+      <p class="sub">Session 1 vs Session 2 — same question, after memory.</p>
+    </header>
+
+    <section class="controls">
+      <button id="btn-create_agent" data-script="create_agent">1. Create agent</button>
+      <button id="btn-session_1" data-script="session_1">2. Run session 1</button>
+      <button id="btn-session_2" data-script="session_2">3. Run session 2</button>
+      <button id="btn-memory" class="secondary">Load memory store</button>
+      <span id="status" class="status"></span>
+    </section>
+
+    <section id="ids" class="ids"></section>
+
+    <section class="panel">
+      <h2>Run log</h2>
+      <pre id="log" class="log">No run started yet.</pre>
+    </section>
+
+    <section class="compare">
+      <div class="panel">
+        <h2>Session 1</h2>
+        <pre id="session1" class="answer">Not run yet.</pre>
+        <h3 class="cite-heading">Citations</h3>
+        <div id="citations1" class="citations">—</div>
+      </div>
+      <div class="panel">
+        <h2>Session 2</h2>
+        <pre id="session2" class="answer">Not run yet.</pre>
+        <h3 class="cite-heading">Citations</h3>
+        <div id="citations2" class="citations">—</div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Diff (session 1 &rarr; session 2)</h2>
+      <pre id="diff" class="diff">Run both sessions to see the diff.</pre>
+    </section>
+
+    <section class="panel">
+      <h2>Memory store</h2>
+      <div id="memory" class="memory">Click &ldquo;Load memory store&rdquo;.</div>
+    </section>
+
+    <script src="/app.js"></script>
+  </body>
+</html>

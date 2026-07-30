@@ -1,0 +1,40 @@
+=== SESSION 2 ===
+Question: I just joined the company and I need read-only prod access to debug an issue tomorrow. What do I do? Be specific about the steps and the people I need to talk to.
+
+--- ANSWER ---
+Let me check my memory store first, then reconcile with the new documents.Now I have a clear picture of what's changed. Let me update the memory files before answering.Memory is now up to date. Here's your answer:
+
+---
+
+**⚠️ What changed:** My previous answer would have told you to post in `#sre-access-requests` on Slack and wait for an SRE pairing session. **That process is gone** as of May 15, 2026. A new certification + just-in-time model replaced it entirely.
+
+---
+
+## How to get read-only prod access as a new hire (effective 2026-05-15)
+
+**First: check your tenure.** You need to have been at the company for **at least 3 working days** (i.e., you can do this from day 4 onward). If you literally started today and tomorrow is day 2 or 3, you'll need to flag this to your manager — they may need to escalate.
+
+**If you're eligible (day 4+), here are the steps:**
+
+1. **Complete the "Prod Access Foundations" course** in the **BTS Learning portal**.
+   - Self-paced, approximately 90 minutes.
+   - Pass the end-of-course assessment.
+
+2. **Get your manager's sign-off** on your certification.
+   - This one-time approval is required before your first access request.
+   - Loop your manager in immediately — do this in parallel with taking the course so they're ready to sign off as soon as you finish.
+
+3. **Request access via the IAM platform.**
+   - The completion email from the BTS Learning portal contains the direct link.
+   - Submit your request there — not in Slack.
+
+4. **Access is granted just-in-time**, scoped to a **4-hour window**.
+   - If you need more time beyond 4 hours, simply re-request through the IAM platform.
+   - Your manager will be notified of each request automatically (no additional approval needed after the initial certification).
+
+---
+
+**Who to talk to:**
+- **Your direct manager** — you need their sign-off on your initial certification. This is the only human dependency.
+- **No SRE contact needed** for read-only access.
+- If you hit a technical problem with the BTS Learning portal or IAM platform, **Carlos Mendes** (Head of SRE) or **Maya Singh** (Head of Security) own this policy and are your escalation path.

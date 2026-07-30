@@ -1,0 +1,52 @@
+=== SESSION 1 ===
+Question: I just joined the company and I need read-only prod access to debug an issue tomorrow. What do I do? Be specific about the steps and the people I need to talk to.
+
+--- ANSWER ---
+The memory store is empty — this is a fresh start. Let me answer based on the documents provided, and then save what I've learned.
+
+---
+
+## Getting Read-Only Prod Access (Fast Path)
+
+Here's your situation: you need access **tomorrow**, which means you likely can't wait for the standard process. Here are both paths:
+
+---
+
+### ⚡ Path 1: Urgent / Emergency Access (Recommended for your situation)
+
+Since you need access urgently to debug an issue:
+
+1. **Contact the on-call SRE directly** — check PagerDuty for who is on rota this week. Based on the team directory, the active SREs are **Liu Wei**, **Sarah Hofmann**, and **Rachel Wong** (Diego Sanchez is on parental leave through July 2026).
+2. **Ask the on-call SRE to grant temporary 24-hour read-only access** under the urgent/P1 exception — no pairing session is required upfront.
+3. **Important:** You must complete the pairing session **within 5 working days** of the grant, or the access is automatically revoked.
+
+> The on-call SRE has authority to grant this without a pairing session. You don't need manager sign-off to trigger this exception, but looping in your manager is good practice.
+
+---
+
+### 🐢 Path 2: Standard Process (if tomorrow isn't critical)
+
+This requires **2 weeks of tenure** plus a completed pairing session, so it may not even be available to you yet depending on how new you are.
+
+If you do meet the tenure requirement:
+
+1. **Open a ticket in `#sre-access-requests`** on Slack.
+2. **Tag two people:**
+   - Your direct manager
+   - The SRE on rota this week (check PagerDuty)
+3. The SRE on rota will schedule a **30-minute pairing session within 2 working days**.
+4. After the session, the SRE provisions access via **Okta** — it goes live within **4 hours**.
+
+---
+
+### Key contacts
+
+| Who | Name | Slack |
+|---|---|---|
+| Head of SRE (escalation) | Carlos Mendes | @carlosm |
+| SRE on rota | Check PagerDuty | — |
+| Your manager | Check with your team | — |
+
+**Bottom line:** Go to PagerDuty right now, find this week's on-call SRE, ping them on Slack, and invoke the urgent access exception. That's your fastest path to being unblocked tomorrow.
+
+---I've saved all the key details to memory for future sessions. You're all set — **the fastest path is the urgent exception via the on-call SRE in PagerDuty**. Good luck with the debugging!
