@@ -1,9 +1,16 @@
 """
-Generate a side-by-side HTML view of the session1 vs session2 outputs.
+Generate a side-by-side HTML view of the session outputs.
 
-Reads outputs/session1.txt and outputs/session2.txt, splits each into its
-question and answer, and renders them side by side in outputs/compare.html
-(markdown rendered client-side via marked.js from a CDN).
+The left panel is always Session 1 (the baseline). The right panel has a
+dropdown to switch between whichever of Session 2, Session 3 (adversarial),
+and the recall session ("what have you learned?") are available in
+outputs/ — each has its own question, since the recall session doesn't ask
+the same question as the others.
+
+Reads outputs/session1.txt (required). Any of outputs/session2.txt,
+outputs/session3.txt, outputs/session_recall.txt that exist are added as
+options in the right-hand panel's dropdown, and rendered client-side via
+marked.js from a CDN. Output is written to outputs/compare.html.
 
 Usage:
     python view_outputs.py
@@ -15,9 +22,13 @@ import webbrowser
 from pathlib import Path
 
 OUTPUT_DIR = Path("outputs")
-SESSION_FILES = {
-    "Session 1 — Baseline": OUTPUT_DIR / "session1.txt",
+BASELINE_FILE = OUTPUT_DIR / "session1.txt"
+BASELINE_TITLE = "Session 1 — Baseline"
+
+COMPARISON_FILES = {
     "Session 2 — After new context": OUTPUT_DIR / "session2.txt",
+    "Session 3 — Adversarial round": OUTPUT_DIR / "session3.txt",
+    "Recall — What have you learned?": OUTPUT_DIR / "session_recall.txt",
 }
 
 HTML_TEMPLATE = """<!DOCTYPE html>
@@ -34,6 +45,7 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     --bg-page: #f6f8fa;
     --accent: #6e40c9;
     --accent-2: #0969da;
+    --accent-3: #cf222e;
   }}
   * {{ box-sizing: border-box; }}
   body {{
@@ -57,12 +69,12 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-size: 0.9rem;
   }}
   .question-banner {{
-    margin: 16px 32px 0 32px;
-    padding: 12px 16px;
+    margin: 12px 22px 0 22px;
+    padding: 10px 14px;
     background: #fff8c5;
     border: 1px solid #d4a72c;
     border-radius: 6px;
-    font-size: 0.95rem;
+    font-size: 0.88rem;
   }}
   .columns {{
     display: flex;
@@ -83,9 +95,23 @@ HTML_TEMPLATE = """<!DOCTYPE html>
     font-weight: 600;
     color: #fff;
     font-size: 0.95rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
   }}
-  .panel:nth-child(1) .panel-header {{ background: var(--accent-2); }}
-  .panel:nth-child(2) .panel-header {{ background: var(--accent); }}
+  .panel-left .panel-header {{ background: var(--accent-2); }}
+  .panel-right .panel-header {{ background: var(--accent); }}
+  .panel-right.adversarial .panel-header {{ background: var(--accent-3); }}
+  .panel-header select {{
+    font-size: 0.85rem;
+    padding: 4px 8px;
+    border-radius: 5px;
+    border: none;
+    background: rgba(255, 255, 255, 0.9);
+    color: #1f2328;
+    font-weight: 500;
+  }}
   .panel-body {{
     padding: 18px 22px;
     line-height: 1.55;
@@ -121,28 +147,54 @@ HTML_TEMPLATE = """<!DOCTYPE html>
 <body>
 <header>
   <h1>Institutional Memory Agent — Session Comparison</h1>
-  <p>Same question, asked before and after new/contradicting context was introduced.</p>
+  <p>Baseline on the left. Pick a comparison session on the right — each may ask a different question.</p>
 </header>
-<div class="question-banner"><strong>Question:</strong> {question}</div>
 <div class="columns">
-{panels}
+  <div class="panel panel-left">
+    <div class="panel-header"><span>{baseline_title}</span></div>
+    <div class="question-banner"><strong>Question:</strong> {baseline_question}</div>
+    <div class="panel-body" data-key="{baseline_title}"></div>
+  </div>
+  <div class="panel panel-right">
+    <div class="panel-header">
+      <span>Compare with:</span>
+      <select id="session-select">
+{options}
+      </select>
+    </div>
+    <div class="question-banner" id="right-question"></div>
+    <div class="panel-body" id="right-body"></div>
+  </div>
 </div>
 <script>
   const answers = {answers_json};
-  document.querySelectorAll('.panel-body').forEach((el) => {{
+  const questions = {questions_json};
+  const adversarialKeys = {adversarial_keys_json};
+
+  document.querySelectorAll('.panel-body[data-key]').forEach((el) => {{
     const key = el.dataset.key;
     el.innerHTML = marked.parse(answers[key] || '');
   }});
+
+  const select = document.getElementById('session-select');
+  const rightBody = document.getElementById('right-body');
+  const rightQuestion = document.getElementById('right-question');
+  const rightPanel = document.querySelector('.panel-right');
+
+  function renderRight(key) {{
+    rightBody.innerHTML = marked.parse(answers[key] || '');
+    rightQuestion.innerHTML = '<strong>Question:</strong> ' + (questions[key] || '');
+    rightPanel.classList.toggle('adversarial', adversarialKeys.includes(key));
+  }}
+
+  select.addEventListener('change', (e) => renderRight(e.target.value));
+  renderRight(select.value);
 </script>
 </body>
 </html>
 """
 
-PANEL_TEMPLATE = """  <div class="panel">
-    <div class="panel-header">{title}</div>
-    <div class="panel-body" data-key="{key}"></div>
-  </div>
-"""
+OPTION_TEMPLATE = '        <option value="{key}">{title}</option>'
 
 
 def parse_session_file(path: Path) -> tuple[str, str]:
@@ -158,23 +210,42 @@ def parse_session_file(path: Path) -> tuple[str, str]:
 
 
 def main() -> None:
-    for path in SESSION_FILES.values():
-        if not path.exists():
-            raise SystemExit(f"Missing {path}. Run the session scripts first.")
+    if not BASELINE_FILE.exists():
+        raise SystemExit(f"Missing {BASELINE_FILE}. Run run_session_1.py first.")
 
-    question = ""
-    answers = {}
-    panels = []
-    for title, path in SESSION_FILES.items():
+    available = {}
+    for title, path in COMPARISON_FILES.items():
+        if path.exists():
+            available[title] = path
+        else:
+            print(f"  (skipping {title}: {path} not found)")
+    if not available:
+        raise SystemExit(
+            "No comparison sessions found. Run run_session_2.py, run_session_3.py, "
+            "or run_session_recall.py first."
+        )
+
+    baseline_question, baseline_answer = parse_session_file(BASELINE_FILE)
+
+    answers = {BASELINE_TITLE: baseline_answer}
+    questions = {BASELINE_TITLE: baseline_question}
+    options = []
+    adversarial_keys = []
+    for title, path in available.items():
         q, a = parse_session_file(path)
-        question = question or q
         answers[title] = a
-        panels.append(PANEL_TEMPLATE.format(title=title, key=title))
+        questions[title] = q
+        options.append(OPTION_TEMPLATE.format(key=title, title=title))
+        if "Adversarial" in title:
+            adversarial_keys.append(title)
 
     html = HTML_TEMPLATE.format(
-        question=question,
-        panels="".join(panels),
+        baseline_title=BASELINE_TITLE,
+        baseline_question=baseline_question,
+        options="\n".join(options),
         answers_json=json.dumps(answers),
+        questions_json=json.dumps(questions),
+        adversarial_keys_json=json.dumps(adversarial_keys),
     )
 
     out_path = OUTPUT_DIR / "compare.html"

@@ -1,0 +1,44 @@
+=== SESSION 2 ===
+Question: I just joined the company and I need read-only prod access to debug an issue tomorrow. What do I do? Be specific about the steps and the people I need to talk to.
+
+--- ANSWER ---
+I can see significant conflicts between the new documents and my stored memory. Let me update memory first, then answer.Memory is updated. Now for your answer:
+
+---
+
+## ⚠️ What changed from my previous answer
+
+The production access policy was **completely overhauled effective 2026-05-15**, replacing the January 2026 version. If I (or anyone else) told you about opening a Slack ticket in `#sre-access-requests` or scheduling an SRE pairing session — **that process is gone.** Here's what you actually need to do now:
+
+---
+
+## How to get read-only prod access as a new hire
+
+### Step 1 — Check your tenure first
+You must have been at the company for **at least 3 working days** before you can request access. If today is day 1 or 2, you cannot get standard access yet (see note below). You can request from **day 4** onward.
+
+### Step 2 — Complete the certification (90 min, self-paced)
+Go to the **BTS Learning portal** and complete the **"Prod Access Foundations"** course. It's self-paced and takes about 90 minutes. Pass the assessment at the end.
+
+### Step 3 — Get manager sign-off on the certification
+Your **direct manager** must sign off on your initial certification. Loop them in now so there's no delay — this is the one approval step in the whole process.
+
+### Step 4 — Request access via the IAM platform
+When you complete the course, you'll receive a **completion email with a link to the IAM platform**. Use that link to submit your access request. **Do not open a Slack ticket. Do not contact SRE directly.**
+
+Access is granted **just-in-time**, scoped to a **4-hour window**. Your manager will be automatically notified of the request (no further approval needed from them for this individual request).
+
+---
+
+## People you need to talk to
+- **Your direct manager** — for the initial certification sign-off. This is the only human approval required.
+- No one else needs to be contacted. The process is self-serve through the IAM platform.
+
+---
+
+## Important caveat — tenure
+If you literally just joined today and need access *tomorrow*, you may not yet meet the 3-working-day minimum. The policy is silent on exceptions to this rule for urgent cases. If you're blocked, I'd suggest raising the urgency with your manager — they can escalate to **Carlos Mendes** (Head of SRE, owns on-call rotation) or **Maya Singh** (Head of Security, co-owns this policy) to explore whether an exception path exists.
+
+---
+
+*(Sources: policy-update-2026-05-15.md — full document; team-directory-update.md — leadership roles)*

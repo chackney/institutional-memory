@@ -1,0 +1,111 @@
+=== RECALL SESSION ===
+Question: Don't read any new documents — none are being provided this session. Instead, check your memory store at /mnt/memory/ and summarise everything you've learned about this domain across our previous sessions: policies (with effective dates), key people and their roles, any contradictions you've had to resolve and how you resolved them, and any recurring questions with your best current answer. Cite which memory file each fact comes from.
+
+--- ANSWER ---
+Here is a full summary of everything retained in memory across our previous sessions. I'll organise it by category and cite the source file for every fact.
+
+---
+
+## 🏢 Company Overview
+
+The company is referred to as **BTS-Synthetic**. It has grown from ~40 to ~280 engineers, a growth milestone that directly triggered a policy overhaul in early 2026. *(Source: memory/policies.md — Production Access Policy preamble)*
+
+---
+
+## 👥 Key People & Roles
+
+All entries are as of the **May 2026 re-org**, sourced from `team-directory-update.md` (May 2026), which supersedes `team-directory.md` and `onboarding-handbook.md` (January 2026). *(Source: memory/people-and-teams.md — Engineering Leadership)*
+
+| Person | Current Role | Notes |
+|---|---|---|
+| **Anika Reddy** | Chief AI Officer | Was Head of Engineering until 2026-04-01. London. |
+| **Yuki Tanaka** | Head of Engineering | Effective 2026-04-15; was Head of Platform. Tokyo. |
+| **Tom Bryce** | Head of Platform | Promoted; was Engineering Ops Lead. London. |
+| **Carlos Mendes** | Head of SRE | Owns on-call rotation. Lisbon. |
+| **Maya Singh** | Head of Security | Owns production access policy. Bangalore. |
+| **Priya Shah** | Engineering Ops Lead | Moved from Web team lead role. |
+| **Idris Patel** | Senior Platform Engineer | Owns auth-service day-to-day. |
+| **Daniel Okonkwo** | Frontend Tech Lead | Was Priya Shah. |
+| **Maya Patel** | Payments Tech Lead (payment-service) | New hire, joined March 2026; was Tom Bryce. |
+
+**SRE Team** *(Source: memory/people-and-teams.md — SRE Team)*: Liu Wei, Sarah Hofmann, Diego Sanchez, Rachel Wong, Anil Krishnan (joined April 2026). On-call rotation owned by Carlos Mendes; check PagerDuty for current week's on-call SRE.
+
+---
+
+## 📋 Policies (with Effective Dates)
+
+### 1. Production Access Policy
+**Effective: 2026-05-15** — supersedes the January 2026 version. *(Source: memory/policies.md — Production Access Policy; original doc: policy-update-2026-05-15.md)*
+
+Triggered by incident **PROD-INC-04-2026** and the company's rapid headcount growth (pairing model didn't scale).
+
+**Three access levels:**
+- **Read-only** — 3 working days tenure + Prod Access Foundations certification + just-in-time IAM request.
+- **Read-write** — unchanged from previous policy.
+- **Privileged** — unchanged from previous policy.
+
+**Read-only request process (new):**
+1. Complete **Prod Access Foundations** course in BTS Learning portal (90 min, self-paced).
+2. Pass the assessment.
+3. Request via **IAM platform** (link in completion email) — no Slack ticket, no SRE pairing.
+4. Access granted **just-in-time**, scoped to a **4-hour window** per request; re-request as needed.
+5. Manager **notified** per request; sign-off only required for initial certification.
+
+**Tenure requirement:** 3 working days (reduced from 2 weeks). Access requestable from Day 4.
+
+**Migration:** Engineers with read-only access under the old policy retain it through **2026-06-30**, then must certify or lose access.
+
+**What was eliminated:** SRE pairing sessions, Slack `#sre-access-requests` tickets, and the old urgent/exception path (24-hour temp access via on-call SRE — not carried over in the new policy).
+
+---
+
+### 2. Git Workflow
+*(Source: memory/policies.md — Git Workflow; original doc: onboarding-handbook.md v4.2)*
+- Trunk-based development.
+- All changes via pull request.
+- **Two approvals** required to merge.
+
+---
+
+### 3. Post-mortem Culture
+*(Source: memory/policies.md — Post-mortem Culture; original doc: onboarding-handbook.md v4.2)*
+- Blameless post-mortems.
+- Written within **48 hours** of any P0 or P1 incident.
+
+---
+
+### 4. Day 1 Access
+*(Source: memory/people-and-teams.md — Day 1 Access)*
+New hires receive: laptop, YubiKey, email, Slack, GitHub, and read-only **staging** access. **No production access on Day 1.**
+
+---
+
+## ⚠️ Contradictions Resolved
+
+Two contradictions were identified and resolved in previous sessions:
+
+1. **Anika Reddy's role:** Early docs (Jan 2026) listed her as Head of Engineering. The May 2026 re-org update shows her promoted to **Chief AI Officer**, with Yuki Tanaka taking over as Head of Engineering effective 2026-04-15. Resolved in favour of the newer document. *(Source: memory/people-and-teams.md — Engineering Leadership)*
+
+2. **Diego Sanchez's parental leave:** Earlier notes stated he was on parental leave through July 2026. The May 2026 update confirms he **returned in May 2026** — the July date is outdated. Resolved in favour of the newer document. *(Source: memory/people-and-teams.md — SRE Team)*
+
+3. **Production access tenure requirement:** The January 2026 policy required **2 weeks** tenure before requesting read-only access. The May 2026 policy reduced this to **3 working days**. Resolved in favour of the newer policy. *(Source: memory/policies.md — Production Access Policy)*
+
+---
+
+## 🔁 Recurring Questions & Best Current Answers
+
+**Q: How does a new engineer get read-only production access?**
+A: After Day 3 (3 working days), complete the Prod Access Foundations course in BTS Learning portal, pass the assessment, then request via the IAM platform link in the completion email. Access is just-in-time, 4-hour windows. No SRE pairing or Slack ticket needed. *(Source: memory/policies.md)*
+
+**Q: Who is Head of Engineering?**
+A: **Yuki Tanaka**, effective 2026-04-15. (Anika Reddy moved up to Chief AI Officer.) *(Source: memory/people-and-teams.md)*
+
+**Q: Who owns the payment-service / auth-service?**
+A: payment-service → **Maya Patel** (since March 2026); auth-service → Yuki Tanaka (with **Idris Patel** day-to-day). For unlisted services, run `gh repo view --json owners <service>`. *(Source: memory/people-and-teams.md — Service Ownership)*
+
+**Q: Who's on call this week?**
+A: The rotation is owned by **Carlos Mendes** — check **PagerDuty** for the current week's SRE. *(Source: memory/people-and-teams.md — SRE Team)*
+
+---
+
+That's the complete picture from memory. Two files exist: `memory/people-and-teams.md` and `memory/policies.md`. Let me know if you'd like to drill into anything or if new information needs to be recorded.
