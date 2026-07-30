@@ -67,6 +67,26 @@ See [`stretch-goals.md`](./stretch-goals.md).
 - Tie memory to a customer ID via metadata so the agent has per-tenant memory.
 - Use Files API to attach growing document sets across multiple sessions and watch context grow.
 
+## Stretch goals implemented in this repo
+
+- **S1 — Explicit memory policy.** `create_agent.py`'s system prompt now has
+  explicit "ALWAYS remember" / "NEVER remember" lists, plus a mandatory
+  citation requirement so every answer names the document (or memory file)
+  a fact came from.
+- **S3 — Adversarial round.** `synthetic-data/round3/access-policy-rollback.md`
+  is a deliberately suspicious "update" (no effective date, no owner, no
+  incident reference, strips out every control instead of tightening them).
+  Run `python run_session_3.py` — the agent should flag it as suspicious and
+  refuse to silently overwrite memory with it.
+- **S4 — Recall test.** `python run_session_recall.py` asks the agent to
+  summarise everything it's learned across previous sessions, using memory
+  only (no new documents). Answer is saved to `outputs/session_recall.txt`.
+- **S5 — Per-tenant memory.** `python run_session_tenant.py --tenant acme
+  --round 1` (then `--round 2`, then repeat for `--tenant globex`) gives each
+  customer its own isolated memory store keyed by `customer_id`, using docs
+  in `synthetic-data/tenants/<tenant>/`. Verify isolation by comparing the
+  round-2 outputs for both tenants — facts should never cross over.
+
 ## Two-minute demo
 
 Side-by-side terminal windows:
@@ -86,8 +106,15 @@ Read both out loud. Let the room see the agent's answer sharpen. Then open the m
 ├── create_agent.py                (creates the Managed Agent with Memory tool)
 ├── run_session_1.py               (session 1 — uses round1 docs)
 ├── run_session_2.py               (session 2 — adds round2 docs, asks same question)
-├── stretch_memory_curator.py      (stretch: curator sub-agent)
+├── run_session_3.py               (stretch S3: adversarial round)
+├── run_session_recall.py          (stretch S4: "what have you learned?")
+├── run_session_tenant.py          (stretch S5: per-tenant memory)
+├── stretch_memory_curator.py      (stretch S2: curator sub-agent)
+├── inspect_memory.py              (list/inspect the memory store)
+├── view_outputs.py                (renders session1/session2 side by side as HTML)
 └── synthetic-data/
     ├── round1/                    (initial context — onboarding handbook, policies, customer cases)
-    └── round2/                    (updates and contradictions)
+    ├── round2/                    (updates and contradictions)
+    ├── round3/                    (deliberately suspicious "update" for adversarial testing)
+    └── tenants/                   (per-tenant docs for acme/ and globex/)
 ```
